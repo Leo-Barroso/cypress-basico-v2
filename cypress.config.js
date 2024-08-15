@@ -6,7 +6,4 @@ module.exports = defineConfig({
       // implement node event listeners here
     },
   },
-  scripts: {
-    "cy:open": "cypress open --config-file=cypress.config.js",
-  }
 });
