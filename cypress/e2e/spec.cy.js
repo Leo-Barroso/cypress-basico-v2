@@ -2,6 +2,7 @@
 
 
 describe("Central de Atendimento ao Cliente - TAT", () => {
+  const seconds = 3000
   beforeEach(() => {
     cy.visit("./src/index.html")
   })
@@ -10,6 +11,7 @@ describe("Central de Atendimento ao Cliente - TAT", () => {
   })
   it("Preencher campos obrigatórios e enviar o formulário", () => {
     const longTest = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt, tempore iusto quibusdam inventore culpa accusantium quos consequatur iure labore sequi omnis eveniet eius cum. "
+    cy.clock()
     cy.get("input[id='firstName']")
       .type("Leonardo")
       .should("have.value", "Leonardo")
@@ -22,14 +24,19 @@ describe("Central de Atendimento ao Cliente - TAT", () => {
     cy.get("#open-text-area").type(longTest, { delay: 0})
     cy.contains("button", "Enviar").click()
     cy.get(".success").should("be.visible")
+    cy.tick(seconds)
+    cy.get(".success").should("not.be.visible")
   })
   it("Exibir mensagem ao submeter formulário com e-mail inválido", () => {
+    cy.clock()
     cy.get("input[id='firstName']").type("Leonardo")
     cy.get("input[id='lastName']").type("Barroso")
     cy.get("input[type='email']").type("leobarrosoadmgmail.com")
     cy.get("#open-text-area").type("Conteúdo da mensagem")
     cy.contains("button", "Enviar").click()
     cy.get(".error").should("be.visible")
+    cy.tick(seconds)
+    cy.get(".error").should("not.be.visible")
   })
   it("Não permitir informar caractere diferente de número no input telefone", () => {
     cy.get("#phone")
@@ -37,6 +44,7 @@ describe("Central de Atendimento ao Cliente - TAT", () => {
       .should("have.value", "")
   })
   it("Exibir mensagem quando o telefone se torna obrigatório mas não é preenchido", () => {
+    cy.clock()
     cy.get("input[id='firstName']")
       .type("Leonardo")
       .should("have.value", "Leonardo")
@@ -50,6 +58,8 @@ describe("Central de Atendimento ao Cliente - TAT", () => {
     cy.get("#open-text-area").type("Conteúdo da mensagem")
     cy.contains("button", "Enviar").click()
     cy.get(".error").should("be.visible")
+    cy.tick(seconds)
+    cy.get(".error").should("not.be.visible")
   })
   it("Preenche e limpar os campos nome, sobrenome, email e telefone", () => {
     cy.get("input[id='firstName']")
@@ -74,12 +84,19 @@ describe("Central de Atendimento ao Cliente - TAT", () => {
       .should("have.value", "")
   })
   it("Exibir mensagem ao submeter o formulário sem preencher os campos obrigatórios", () => {
+    cy.clock()
     cy.contains("button", "Enviar").click()
     cy.get(".error").should("be.visible")
+    cy.tick(seconds)
+    cy.get(".error").should("not.be.visible")
   })
   it("Enviar formuário com sucesso usando um comando customizado", () => {
+    cy.clock()
     cy.submeteFormularioComCamposObrigatorios()
     cy.get(".success").should("be.visible")
+    cy.tick(seconds)
+    cy.get(".success").should("not.be.visible")
+
   })
   it("Selecionar um produto (YouTube) por seu texto", () => {
     cy.get("#product")
@@ -117,7 +134,7 @@ describe("Central de Atendimento ao Cliente - TAT", () => {
       .uncheck()
       .should("not.be.checked")
   })
-  it("selecionar um arquivo da pasta fixtures", () => {
+  it("Selecionar um arquivo da pasta fixtures", () => {
     cy.get("input[type='file']")
       .should("not.have.value")
       .selectFile("./cypress/fixtures/example.json")
@@ -125,7 +142,7 @@ describe("Central de Atendimento ao Cliente - TAT", () => {
         expect($input[0].files[0].name).to.equal("example.json")
       })
   })
-  it("selecionar um arquivo simulando um drag-and-drop", () => {
+  it("Selecionar um arquivo simulando um drag-and-drop", () => {
     cy.get("input[type='file']")
       .should("not.have.value")
       .selectFile("./cypress/fixtures/example.json", {action: "drag-drop"})
