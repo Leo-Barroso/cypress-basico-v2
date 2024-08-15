@@ -1,0 +1,13 @@
+Cypress.Commands.add("submeteFormularioComCamposObrigatorios", () => {
+  cy.get("input[id='firstName']")
+    .type("Leonardo")
+    .should("have.value", "Leonardo")
+  cy.get("input[id='lastName']")
+    .type("Barroso")
+    .should("have.value", "Barroso")
+  cy.get("input[type='email']")
+    .type("leobarrosoadm@gmail.com")
+    .should("have.value", "leobarrosoadm@gmail.com")
+  cy.get("#open-text-area").type("Conteúdo da mensagem")
+  cy.contains("button", "Enviar").click()
+})
