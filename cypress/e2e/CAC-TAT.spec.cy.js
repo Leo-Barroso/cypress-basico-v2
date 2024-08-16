@@ -90,13 +90,14 @@ describe("Central de Atendimento ao Cliente - TAT", () => {
     cy.tick(seconds)
     cy.get(".error").should("not.be.visible")
   })
-  it("Enviar formuário com sucesso usando um comando customizado", () => {
-    cy.clock()
-    cy.submeteFormularioComCamposObrigatorios()
-    cy.get(".success").should("be.visible")
-    cy.tick(seconds)
-    cy.get(".success").should("not.be.visible")
-
+  Cypress._.times(5, () => {
+    it("Enviar formuário com sucesso usando um comando customizado", () => {
+      cy.clock()
+      cy.submeteFormularioComCamposObrigatorios()
+      cy.get(".success").should("be.visible")
+      cy.tick(seconds)
+      cy.get(".success").should("not.be.visible")
+    })
   })
   it("Selecionar um produto (YouTube) por seu texto", () => {
     cy.get("#product")
@@ -167,5 +168,45 @@ describe("Central de Atendimento ao Cliente - TAT", () => {
       .click()
     cy.contains("Talking About Testing")
       .should("be.visible")
+  })
+  it('Exibir e esconder as mensagens de sucesso e erro usando o .invoke', () => {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Mensagem enviada com sucesso.')
+      .invoke('hide')
+      .should('not.be.visible')
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Valide os campos obrigatórios!')
+      .invoke('hide')
+      .should('not.be.visible')
+  })
+  it("Preencher a area de texto usando o comando invoke", () => {
+    const longText = Cypress._.repeat("0123456789", 20)
+    cy.get("#open-text-area")
+      .invoke("val", longText)
+      .should("have.value", longText)
+  })
+  it("faz uma requisição HTTP", () => {
+    cy.request("https://cac-tat.s3.eu-central-1.amazonaws.com/index.html")
+      .should((response) => {
+        const { status, statusText, body } = response
+        expect(status).to.equal(200)
+        expect(statusText).to.equal("OK")  
+        expect(body).to.include("CAC TAT") 
+      })
+  })
+  it("Encontra o gato escondido", () => {
+    cy.get("#cat")
+      .invoke("show")
+      .should("be.visible")
+    cy.get("#title")
+      .invoke("text", "CAT TAT")
+    cy.get("#subtitle")
+      .invoke("text", "Eu gosto de gatos.")
   })
 })
